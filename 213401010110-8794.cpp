@@ -1,159 +1,194 @@
-#include<iostream>
-#include<stdio.h>
-#include<string.h>
-using namespace std;
-
-#define Maxsize 100
-#define OK 1
-#define ERROR 0
-typedef char ElemType;
-typedef int Status;
-typedef struct SqStack{//Õ»µÄ¶¨Òå
-	ElemType* base;
-	ElemType* top;
-	int stacksize;
-}SqStack;
-Status InitSqStack(SqStack& S) {//Õ»µÄ³õÊ¼»¯
-	S.base = new ElemType[Maxsize];
-	S.top = S.base;
-	S.stacksize = Maxsize;
-	return OK;
-}
-void Push(SqStack& S,ElemType e) {//ÔªËØÈëÕ»
-	if (S.top - S.base == S.stacksize)
-	{
-		cout << "¶ÑÕ»ÒÑÂú" << endl;
-		exit(0);
-	}
-	*S.top++ = e;
-}
-void Pop(SqStack& S, ElemType& e) {//ÔªËØ³öÕ»
-	if (S.base == S.top)
-	{
-		cout << "¶ÑÕ»ÒÑ¿Õ" << endl;
-		exit(0);
-	}
-	e = *--S.top;
-}
-ElemType GetTop(SqStack S) {//·µ»ØÕ»¶¥ÔªËØ
-	if (S.top == S.base)
-	{
-		cout << "¶ÑÕ»ÒÑ¿Õ" << endl;
-		exit(0);
-	}
-	ElemType* p = S.top;
-	p--;
-	ElemType e = *p;
-	return e;
-}
-bool IsMatch(ElemType a[])//ÅĞ¶ÏÀ¨ºÅÊÇ·ñÆ¥Åä
+#include <stdio.h>
+struct data
 {
-	int Flag = 0;
-	for (int i = 0; i < strlen(a); i++)
-	{
-		if (a[i] == '(')
-			Flag++;
-		if (a[i] == ')')
-			Flag--;
-	}
-	if (Flag == 0)
-		return true;
-	else
-		return false;
+	char model[10];
+	char name[10];
+	double longth;
+	double wide;
+	double wing;
+	double speed;
+	double high;
+	double flying;
+	double radius;
+	double amount;
 }
-int ComparePriority(ElemType x1, ElemType x2) {//ÅĞ¶ÏÕ»¶¥ÔªËØÓëÊäÈëÔªËØµÄÓÅÏÈ¼¶
-	int Flag=-1;
-	if ((x1 == '+' || x1 == '-') && (x2 == '+' || x2 == '-' || x2 == ')' || x2 == '#'))
-		Flag = 1;
-	else if ((x1 == '+' || x1 == '-') && (x2 == '*' || x2 == '/' || x2 == ')' || x2 == '('))
-		Flag = 0;
-	else if ((x1 == '*' || x1 == '/') && (x2 == '+' || x2 == '-' || x2 == '*' || x2 == '/' || x2 == ')' || x2 == '#'))
-		Flag = 1;
-	else if ((x1 == '*' || x1 == '/') && (x2 == '('))
-		Flag = 0;
-	else if ((x1 == '(' || x1 == '#') && (x2 == '+' || x2 == '-' || x2 == '*' || x2 == '/' || x2 == '('))
-		Flag = 0;
-	return Flag;
-}
-int StackLength(SqStack S) {//ÇóÕ»µÄ³¤¶È
-	return S.top - S.base;
-}
-void Fun(SqStack &S,ElemType ptr[]) {//´¦Àí±í´ïÊ½·­Òë
-	ElemType ch, e;
-	int i = 0;
-	cout << "·­ÒëºóµÄºó×º±í´ïÊ½Îª£º" << endl;
-	while(ptr[i]!='\n')
-	{
-		ch = ptr[i];
-		if (ch >= '0' && ch <= '9')
-			cout << ch;
-		else
-		{
-			if (ch != ')')
-			{
-				if (ComparePriority(GetTop(S), ch) == 0)
-					Push(S, ch);
-				else if (ComparePriority(GetTop(S), ch) == 1)
-				{
-					Pop(S, e);
-					cout << e;
-					Push(S, ch);
-				}
-			}
-			if (ch == ')')
-			{
-				while (GetTop(S) != '(')
-				{
-					Pop(S, e);
-					if(e!='('&&e!=')')
-					cout << e;
-				}
-				if (GetTop(S) == '(')
-					Pop(S, e);
-			}
-		}
-		if (ch == '#')
-		{
-			Pop(S, e);
-			while (GetTop(S) != '#')
-			{
-				Pop(S, e);
-				cout << e;
-			}
-			break;
-		}
-		i++;
-	}
-	cout << endl;
-}
-
+p[5] = { { "J-20","æ­¼-20",20.3,2.5,12.88,2.8,18,6.5,2.2,11 },
+		{ "J-31","æ­¼-31",16.8,4.8,10,1.8,16,3,1.25,8 },
+		{"J-16","æ­¼-16",21.19,5.6,14.7,2.5,20,3.9,1.5,12},
+		{"J-10","æ­¼-10",14.27,5.3, 8.78 ,2.0,17,3.9,1.25,0.7},
+		{"J-8"," æ­¼-8 ",21.52,5.41, 9.34 ,2.2,20.5,2,0.6,0.7} };
 int main()
 {
-	SqStack S;
-	InitSqStack(S); 
-	Push(S, '#');
-	ElemType str[Maxsize];
-	cout << "**********»¶Ó­Ê¹ÓÃ±í´ïÊ½·­Òë¹¦ÄÜ**********" << endl;
-	cout << "**********±¾¹¦ÄÜ½«°ÑËãÊõÖĞ×º±í´ïÊ½×ª»»Îªºó×º±í´ïÊ½**********" << endl;
-	int choice = 0;
-	do
+	struct data temp;
+	int n;
+	int m;
+	int k;
+	int i = 1;
+	int flag = 0;
+	while (i = 1)
 	{
-	    cout << "ÇëÊäÈëÖĞ×º±í´ïÊ½ÒÔ#½áÊø:" << endl;
-		cin >> str;
-		while (IsMatch(str) == false)
+		printf("è¯·è¾“å…¥éœ€è¦æ‰§è¡Œçš„å‘½ä»¤ï¼š\næŸ¥è¯¢è¯·è¾“å…¥ï¼š1\næ˜¾ç¤ºè¯·è¾“å…¥ï¼š2\næ’åºè¯·è¾“å…¥ï¼š3\nç»“æŸè¯·è¾“å…¥ï¼š0\n");
+		scanf("%d", &n);
+		switch (n)
 		{
-
-			cout << "À¨ºÅ²»Æ¥Åä!!" << endl;
-			cout << "ÇëÖØĞÂÊäÈëÖĞ×º±í´ïÊ½ÒÔ#½áÊø£º" << endl;
-			cin >> str;
-
+		case 1:printf("è¯·è¾“å…¥æƒ³æŸ¥è¯¢é£æœºå·ç "); scanf("%d", &m); switch (m) {
+		case 1:printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[0].model, p[0].name, p[0].longth, p[0].wide, p[0].wing, p[0].speed, p[0].high, p[0].flying, p[0].radius, p[0].amount); break;
+		case 2:printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[1].model, p[1].name, p[1].longth, p[1].wide, p[1].wing, p[1].speed, p[1].high, p[1].flying, p[1].radius, p[1].amount); break;
+		case 3:printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[2].model, p[2].name, p[2].longth, p[2].wide, p[2].wing, p[2].speed, p[2].high, p[2].flying, p[2].radius, p[2].amount); break;
+		case 4:printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[3].model, p[3].name, p[3].longth, p[3].wide, p[3].wing, p[3].speed, p[3].high, p[3].flying, p[3].radius, p[3].amount); break;
+		case 5:printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[4].model, p[4].name, p[4].longth, p[4].wide, p[4].wing, p[4].speed, p[4].high, p[4].flying, p[4].radius, p[4].amount); break;
 		}
-		Fun(S, str);
-		cout << "ÇëÊäÈë1Ñ¡Ôñ¼ÌĞøÊ¹ÓÃ»òÊäÈë0Ñ¡ÔñÍË³ö" << endl;
-		cin >> choice;
-	} while (choice == 1);
-	cout << "¸ĞĞ»Ê¹ÓÃ±í´ïÊ½·­Òë¹¦ÄÜ£¡£¡£¡" << endl;
-
+			  break;
+		case 2:for (int i = 0; i < 5; i++)
+		{
+			printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[i].model, p[i].name, p[i].longth, p[i].wide, p[i].wing, p[i].speed, p[i].high, p[i].flying, p[i].radius, p[i].amount);
+		}
+			  break;
+		case 3:printf("è¯·è¾“å…¥æƒ³æ’åºç±»å‹ï¼š\næœºèº«é•¿è¯·è¾“å…¥ï¼š1\næœºå®½é•¿è¯·è¾“å…¥ï¼š2\nç¿¼å±•è¯·è¾“å…¥ï¼š3\næœ€å¤§é£è¡Œé€Ÿåº¦è¯·è¾“å…¥ï¼š4\næœ€å¤§é£è¡Œé«˜åº¦è¯·è¾“å…¥ï¼š5\nèˆªç¨‹è¯·è¾“å…¥ï¼š6\nä½œæˆ˜åŠå¾„è¯·è¾“å…¥ï¼š7\nè½½å¼¹æ•°è¯·è¾“å…¥ï¼š8\n"); scanf("%d", &k); switch (k) {
+		case 1:for (int i = 4; i >= 0; i--)
+		{
+			for (int j = 1; j <= i; j++)
+			{
+				if (p[j - 1].longth > p[j].longth)
+				{
+					temp = p[j - 1];
+					p[j - 1] = p[j];
+					p[j] = temp;
+				}
+			}
+		}
+			  for (int i = 0; i < 5; i++)
+			  {
+				  printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[i].model, p[i].name, p[i].longth, p[i].wide, p[i].wing, p[i].speed, p[i].high, p[i].flying, p[i].radius, p[i].amount);
+			  }
+			  break;
+		case 2:for (int i = 4; i >= 0; i--)
+		{
+			for (int j = 1; j <= i; j++)
+			{
+				if (p[j - 1].wide > p[j].wide)
+				{
+					temp = p[j - 1];
+					p[j - 1] = p[j];
+					p[j] = temp;
+				}
+			}
+		}
+			  for (int i = 0; i < 5; i++)
+			  {
+				  printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[i].model, p[i].name, p[i].longth, p[i].wide, p[i].wing, p[i].speed, p[i].high, p[i].flying, p[i].radius, p[i].amount);
+			  }
+			  break;
+		case 3:for (int i = 4; i >= 0; i--)
+		{
+			for (int j = 1; j <= i; j++)
+			{
+				if (p[j - 1].wing > p[j].wing)
+				{
+					temp = p[j - 1];
+					p[j - 1] = p[j];
+					p[j] = temp;
+				}
+			}
+		}
+			  for (int i = 0; i < 5; i++)
+			  {
+				  printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[i].model, p[i].name, p[i].longth, p[i].wide, p[i].wing, p[i].speed, p[i].high, p[i].flying, p[i].radius, p[i].amount);
+			  }
+			  break;
+		case 4:for (int i = 4; i >= 0; i--)
+		{
+			for (int j = 1; j <= i; j++)
+			{
+				if (p[j - 1].speed > p[j].speed)
+				{
+					temp = p[j - 1];
+					p[j - 1] = p[j];
+					p[j] = temp;
+				}
+			}
+		}
+			  for (int i = 0; i < 5; i++)
+			  {
+				  printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[i].model, p[i].name, p[i].longth, p[i].wide, p[i].wing, p[i].speed, p[i].high, p[i].flying, p[i].radius, p[i].amount);
+			  }
+			  break;
+		case 5:for (int i = 4; i >= 0; i--)
+		{
+			for (int j = 1; j <= i; j++)
+			{
+				if (p[j - 1].high > p[j].high)
+				{
+					temp = p[j - 1];
+					p[j - 1] = p[j];
+					p[j] = temp;
+				}
+			}
+		}
+			  for (int i = 0; i < 5; i++)
+			  {
+				  printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[i].model, p[i].name, p[i].longth, p[i].wide, p[i].wing, p[i].speed, p[i].high, p[i].flying, p[i].radius, p[i].amount);
+			  }
+			  break;
+		case 6:for (int i = 4; i >= 0; i--)
+		{
+			for (int j = 1; j <= i; j++)
+			{
+				if (p[j - 1].flying > p[j].flying)
+				{
+					temp = p[j - 1];
+					p[j - 1] = p[j];
+					p[j] = temp;
+				}
+			}
+		}
+			  for (int i = 0; i < 5; i++)
+			  {
+				  printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[i].model, p[i].name, p[i].longth, p[i].wide, p[i].wing, p[i].speed, p[i].high, p[i].flying, p[i].radius, p[i].amount);
+			  }
+			  break;
+		case 7:for (int i = 4; i >= 0; i--)
+		{
+			for (int j = 1; j <= i; j++)
+			{
+				if (p[j - 1].radius > p[j].radius)
+				{
+					temp = p[j - 1];
+					p[j - 1] = p[j];
+					p[j] = temp;
+				}
+			}
+		}
+			  for (int i = 0; i < 5; i++)
+			  {
+				  printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[i].model, p[i].name, p[i].longth, p[i].wide, p[i].wing, p[i].speed, p[i].high, p[i].flying, p[i].radius, p[i].amount);
+			  }
+			  break;
+		case 8:for (int i = 4; i >= 0; i--)
+		{
+			for (int j = 1; j <= i; j++)
+			{
+				if (p[j - 1].amount > p[j].amount)
+				{
+					temp = p[j - 1];
+					p[j - 1] = p[j];
+					p[j] = temp;
+				}
+			}
+		}
+			  for (int i = 0; i < 5; i++)
+			  {
+				  printf("%s %s %.2fç±³ %.2fç±³ %.2fç±³ %.2fç±³ã€ç§’ %.2fç±³ %.2fç±³ %.2fç±³ %.2få¨\n", p[i].model, p[i].name, p[i].longth, p[i].wide, p[i].wing, p[i].speed, p[i].high, p[i].flying, p[i].radius, p[i].amount);
+			  }
+			  break;
+		}
+			  break;
+		case 0:flag = 1; break;
+		}
+		if (flag == 1)
+		{
+			break;
+		}
+	}
 	return 0;
 }
-
